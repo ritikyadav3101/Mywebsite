@@ -351,7 +351,7 @@ async function askAI(question) {
     .replace('[MODE]', currentMode);
 
   try {
-    const response = await fetch('http://localhost:3002/ask', {
+    const response = await fetch('/ask', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ prompt: question, history: history, system: systemPrompt })
