@@ -8,7 +8,7 @@ let API_KEY = '';
 try {
   const envFile = fs.readFileSync(os.homedir() + '/.env_jarvis', 'utf8');
   const match = envFile.match(/GEMINI_KEY=(.+)/);
-  if (match) API_KEY = match[1].trim();
+  if (match) API_KEY = match[1].trim().replace(/\s+/g, "");
 } catch(e) {}
 if (!API_KEY) API_KEY = process.env.GEMINI_KEY || '';
 console.log('Key loaded:', API_KEY ? 'YES' : 'NO');
