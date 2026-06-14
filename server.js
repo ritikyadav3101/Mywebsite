@@ -1,11 +1,19 @@
-const process_env_key = "AQ.Ab8RN6LYpdMxWXh5EaxLdUroF2cEM7gONOKyi51qmHn1WXR-RA";
+const fs = require('fs');
+const os = require('os');
 const http = require('http');
 const https = require('https');
-const fs = require('fs');
 const path = require('path');
 
-const API_KEY = process_env_key;
-const PORT = process.env.PORT || 3000;
+let API_KEY = '';
+try {
+  const envFile = fs.readFileSync(os.homedir() + '/.env_jarvis', 'utf8');
+  const match = envFile.match(/GEMINI_KEY=(.+)/);
+  if (match) API_KEY = match[1].trim();
+} catch(e) {}
+if (!API_KEY) API_KEY = process.env.GEMINI_KEY || '';
+console.log('Key loaded:', API_KEY ? 'YES' : 'NO');
+
+const PORT = process.env.PORT || 3002;
 
 const server = http.createServer((req, res) => {
   res.setHeader('Access-Control-Allow-Origin', '*');
@@ -20,7 +28,7 @@ const server = http.createServer((req, res) => {
     fs.readFile(filePath, (err, data) => {
       if (err) { res.writeHead(404); res.end('Not found'); return; }
       const ext = path.extname(file);
-      const type = ext === '.html' ? 'text/html' : ext === '.svg' ? 'image/svg+xml' : 'text/plain';
+      const type = ext === '.html' ? 'text/html' : 'text/plain';
       res.writeHead(200, { 'Content-Type': type });
       res.end(data);
     });
@@ -32,26 +40,63 @@ const server = http.createServer((req, res) => {
     req.on('data', chunk => body += chunk);
     req.on('end', () => {
       const { prompt, history, system } = JSON.parse(body);
-      const contents = history && history.length > 0 ? history : [{ role: "user", parts: [{ text: prompt }] }];
-      const systemText = system || "You are a helpful assistant.";
+      
+      const messages = [];
+      if (system) messages.push({ role: 'system', content: system });
+      if (history && history.length > 0) {
+        history.forEach(h => {
+          messages.push({
+            role: h.role === 'model' ? 'assistant' : 'user',
+            content: h.parts[0].text
+          });
+        });
+      } else {
+        messages.push({ role: 'user', content: prompt });
+      }
+
       const payload = JSON.stringify({
-        system_instruction: { parts: [{ text: systemText }] },
-        contents: contents
+        model: 'llama-3.1-8b-instant',
+        messages: messages,
+        max_tokens: 1024
       });
+
       const options = {
-        hostname: 'generativelanguage.googleapis.com',
-        path: `/v1beta/models/gemini-1.5-flash:generateContent?key=${API_KEY}`,
+        hostname: 'api.groq.com',
+        path: '/openai/v1/chat/completions',
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' }
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${API_KEY}`,
+          'Content-Length': Buffer.byteLength(payload)
+        }
       };
+
       const apiReq = https.request(options, apiRes => {
         let data = '';
         apiRes.on('data', chunk => data += chunk);
         apiRes.on('end', () => {
-          res.writeHead(200, { 'Content-Type': 'application/json' });
-          res.end(data);
+          console.log('Groq response:', data.substring(0, 200));
+          try {
+            const groqData = JSON.parse(data);
+            const text = groqData.choices[0].message.content;
+            const geminiFormat = {
+              candidates: [{
+                content: {
+                  parts: [{ text: text }],
+                  role: 'model'
+                }
+              }]
+            };
+            res.writeHead(200, { 'Content-Type': 'application/json' });
+            res.end(JSON.stringify(geminiFormat));
+          } catch(e) {
+            console.log('Parse error:', e.message);
+            res.writeHead(500);
+            res.end(JSON.stringify({ error: data }));
+          }
         });
       });
+
       apiReq.on('error', e => {
         res.writeHead(500);
         res.end(JSON.stringify({ error: e.message }));
@@ -62,4 +107,4 @@ const server = http.createServer((req, res) => {
   }
 });
 
-server.listen(PORT, "0.0.0.0", () => console.log('Server running on port ' + PORT));
+server.listen(PORT, '0.0.0.0', () => console.log('Server running on port ' + PORT));
