@@ -1,10 +1,10 @@
-require("dotenv").config({ path: require('os').homedir() + '/.env_jarvis' });
+const process_env_key = "AQ.Ab8RN6LYpdMxWXh5EaxLdUroF2cEM7gONOKyi51qmHn1WXR-RA";
 const http = require('http');
 const https = require('https');
 const fs = require('fs');
 const path = require('path');
 
-const API_KEY = process.env.GEMINI_KEY;
+const API_KEY = process_env_key;
 const PORT = process.env.PORT || 3000;
 
 const server = http.createServer((req, res) => {
