@@ -1,0 +1,436 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Medieval India AI Tutor</title>
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body {
+  background: #0a0a0f;
+  color: #e0c080;
+  font-family: 'Georgia', serif;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+.header {
+  background: linear-gradient(135deg, #1a0a00, #2d1400);
+  border-bottom: 2px solid #8b4513;
+  padding: 15px 20px;
+  text-align: center;
+}
+.header h1 {
+  font-size: 20px;
+  color: #ffd700;
+  letter-spacing: 2px;
+}
+.header p {
+  font-size: 11px;
+  color: #a0784a;
+  margin-top: 4px;
+}
+.topics {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  padding: 15px;
+  background: #0f0800;
+  border-bottom: 1px solid #3d2000;
+}
+.topic-btn {
+  padding: 6px 12px;
+  background: #1a0d00;
+  border: 1px solid #8b4513;
+  border-radius: 15px;
+  color: #e0c080;
+  font-size: 11px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+.topic-btn:hover, .topic-btn.active {
+  background: #8b4513;
+  color: #ffd700;
+}
+.mode-bar {
+  display: flex;
+  gap: 10px;
+  padding: 10px 15px;
+  background: #080500;
+  border-bottom: 1px solid #2d1400;
+  flex-wrap: wrap;
+}
+.mode-btn {
+  padding: 8px 15px;
+  border: 1px solid #8b4513;
+  background: transparent;
+  color: #e0c080;
+  border-radius: 20px;
+  font-size: 12px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+.mode-btn.active {
+  background: #8b4513;
+  color: #ffd700;
+}
+.chat-area {
+  flex: 1;
+  overflow-y: auto;
+  padding: 15px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+.message {
+  max-width: 90%;
+  padding: 12px 15px;
+  border-radius: 12px;
+  font-size: 14px;
+  line-height: 1.7;
+}
+.user-msg {
+  background: #1a0d00;
+  border: 1px solid #8b4513;
+  align-self: flex-end;
+  color: #ffd700;
+}
+.ai-msg {
+  background: #0f0800;
+  border: 1px solid #3d2000;
+  align-self: flex-start;
+  color: #e0c080;
+}
+.ai-msg .trick {
+  background: #1a1000;
+  border-left: 3px solid #ffd700;
+  padding: 8px 12px;
+  margin-top: 10px;
+  border-radius: 4px;
+  font-style: italic;
+  color: #ffd700;
+  font-size: 13px;
+}
+.input-area {
+  padding: 15px;
+  background: #0a0500;
+  border-top: 1px solid #3d2000;
+  display: flex;
+  gap: 10px;
+}
+textarea {
+  flex: 1;
+  padding: 12px;
+  background: #1a0d00;
+  border: 1px solid #8b4513;
+  border-radius: 10px;
+  color: #e0c080;
+  font-size: 14px;
+  resize: none;
+  height: 60px;
+  outline: none;
+  font-family: Georgia, serif;
+}
+textarea::placeholder { color: #5a3a1a; }
+.send-btn {
+  padding: 12px 20px;
+  background: #8b4513;
+  border: none;
+  border-radius: 10px;
+  color: #ffd700;
+  cursor: pointer;
+  font-size: 18px;
+}
+.loading {
+  color: #8b4513;
+  font-style: italic;
+  font-size: 13px;
+  padding: 10px;
+}
+.quick-btns {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  padding: 10px 15px;
+  background: #080500;
+}
+.quick-btn {
+  padding: 6px 12px;
+  background: #0f0800;
+  border: 1px solid #5a3a1a;
+  border-radius: 15px;
+  color: #a08040;
+  font-size: 11px;
+  cursor: pointer;
+}
+.quick-btn:hover { border-color: #ffd700; color: #ffd700; }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <h1>⚔️ Medieval India AI Tutor</h1>
+  <p>Bihar APO & UPSC Specialist • Smart Memory Tricks • Expert Guidance</p>
+</div>
+
+<div class="topics" id="topicsBar">
+  <button class="topic-btn active" onclick="setTopic('General', this)">All Topics</button>
+  <button class="topic-btn" onclick="setTopic('Muslim Invasion', this)">Muslim Invasion</button>
+  <button class="topic-btn" onclick="setTopic('Slave Dynasty', this)">Slave Dynasty</button>
+  <button class="topic-btn" onclick="setTopic('Khalji Dynasty', this)">Khalji Dynasty</button>
+  <button class="topic-btn" onclick="setTopic('Tughluq Dynasty', this)">Tughluq Dynasty</button>
+  <button class="topic-btn" onclick="setTopic('Lodi Dynasty', this)">Lodi Dynasty</button>
+  <button class="topic-btn" onclick="setTopic('Vijayanagara Empire', this)">Vijayanagara</button>
+  <button class="topic-btn" onclick="setTopic('Delhi Sultanate Administration', this)">DS Admin</button>
+  <button class="topic-btn" onclick="setTopic('Delhi Sultanate Art Architecture', this)">DS Art</button>
+  <button class="topic-btn" onclick="setTopic('Bhakti Sufi Movement', this)">Bhakti & Sufi</button>
+  <button class="topic-btn" onclick="setTopic('Mughal Dynasty Babur', this)">Babur</button>
+  <button class="topic-btn" onclick="setTopic('Humayun Sher Shah Suri', this)">Humayun</button>
+  <button class="topic-btn" onclick="setTopic('Akbar', this)">Akbar</button>
+  <button class="topic-btn" onclick="setTopic('Jahangir', this)">Jahangir</button>
+  <button class="topic-btn" onclick="setTopic('Shah Jahan', this)">Shah Jahan</button>
+  <button class="topic-btn" onclick="setTopic('Aurangzeb', this)">Aurangzeb</button>
+  <button class="topic-btn" onclick="setTopic('Mughal Administration', this)">Mughal Admin</button>
+  <button class="topic-btn" onclick="setTopic('Mughal Music Paintings', this)">Mughal Art</button>
+  <button class="topic-btn" onclick="setTopic('Maratha State', this)">Maratha</button>
+  <button class="topic-btn" onclick="setTopic('Sikh Sect', this)">Sikh Sect</button>
+  <button class="topic-btn" onclick="setTopic('Mughal Disintegration', this)">Disintegration</button>
+</div>
+
+<div class="mode-bar">
+  <button class="mode-btn active" onclick="setMode('learn', this)">📚 Learn</button>
+  <button class="mode-btn" onclick="setMode('trick', this)">🧠 Memory Tricks</button>
+  <button class="mode-btn" onclick="setMode('quiz', this)">❓ Quiz Me</button>
+  <button class="mode-btn" onclick="setMode('exam', this)">📝 Exam Tips</button>
+  <button class="mode-btn" onclick="setMode('timeline', this)">📅 Timeline</button>
+  <button class="mode-btn" onclick="setMode('compare', this)">⚖️ Compare</button>
+</div>
+
+<div class="quick-btns">
+  <button class="quick-btn" onclick="quickAsk('Give me memory tricks for important dates and battles')">🎯 Battle Tricks</button>
+  <button class="quick-btn" onclick="quickAsk('What are the most important MCQ topics for Bihar APO exam')">📋 APO MCQs</button>
+  <button class="quick-btn" onclick="quickAsk('Create a quick revision summary')">⚡ Quick Revision</button>
+  <button class="quick-btn" onclick="quickAsk('Give me important years to remember with tricks')">📅 Important Years</button>
+  <button class="quick-btn" onclick="quickAsk('What questions are most likely to come in exam')">🎲 Likely Questions</button>
+</div>
+
+<div class="chat-area" id="chatArea">
+  <div class="message ai-msg">
+    🙏 <strong>Namaste! Welcome to Medieval India AI Tutor!</strong><br><br>
+    I am specialized for <strong>Bihar APO, BPSC, UPSC</strong> and other competitive exams covering Medieval Indian History.<br><br>
+    I can help you with:<br>
+    ⚔️ All dynasties from Muslim Invasion to Mughal decline<br>
+    🧠 Smart memory tricks for dates, battles & rulers<br>
+    ❓ Practice MCQs in Bihar APO style<br>
+    📝 Exam-focused revision<br>
+    📅 Timeline mastery<br><br>
+    <strong>Select a topic above or ask me anything!</strong><br><br>
+    <div class="trick">💡 Quick Trick: Remember Delhi Sultanate dynasties as <strong>"SaKaTaLo"</strong> — Slave, Khalji, Tughluq, Lodi!</div>
+  </div>
+</div>
+
+<div class="input-area">
+  <textarea id="userInput" placeholder="Ask about any topic, request memory tricks, or say 'quiz me'..." onkeypress="handleKey(event)"></textarea>
+  <button class="send-btn" onclick="sendMessage()">➤</button>
+</div>
+
+<script>
+const API_KEY = "AQ.Ab8RN6J3_MTmW48-kPsRF0tpLDUFHRqTnI7KIKf9eOWnD2kiqA";
+let currentTopic = "General Medieval Indian History";
+let currentMode = "learn";
+let history = [];
+
+const SYSTEM_PROMPT = `You are an expert Medieval Indian History tutor specialized for Bihar APO, BPSC, and UPSC competitive exams. You have deep expertise in:
+
+TOPICS YOU COVER:
+1. Muslim Invasion of India (Arab invasion, Mahmud Ghazni, Muhammad Ghori)
+2. Delhi Sultanate - Slave Dynasty (Qutb-ud-din Aibak, Iltutmish, Razia Sultan, Balban)
+3. Khalji Dynasty (Jalal-ud-din, Alauddin Khalji - market reforms, conquests)
+4. Tughluq Dynasty (Ghiyasuddin, Muhammad bin Tughluq, Firuz Shah)
+5. Lodi Dynasty (Bahlul Lodi, Sikandar Lodi, Ibrahim Lodi)
+6. Vijayanagara Empire (Sangama, Saluva, Tuluva, Aravidu dynasties, Krishnadevaraya)
+7. Delhi Sultanate Administration (Iqta system, revenue, military)
+8. Delhi Sultanate Art and Architecture (Qutb Minar, mosques, Indo-Islamic style)
+9. Delhi Sultanate Literature (Persian literature, historians like Amir Khusrau)
+10. Bhakti and Sufi Movement (Kabir, Mirabai, Tukaram, Chishti, Suhrawardi orders)
+11. Mughal Dynasty - Babur (First Battle of Panipat, Khanwa, Chanderi)
+12. Humayun and Sher Shah Suri (Sur Empire, Grand Trunk Road, administrative reforms)
+13. Akbar (Din-i-Ilahi, Navratnas, Mansabdari, conquests, religious policy)
+14. Jahangir (Nur Jahan, paintings, justice chain, rebellions)
+15. Shah Jahan (Taj Mahal, Peacock Throne, architecture, Deccan policy)
+16. Aurangzeb (Jizya, Deccan wars, religious policy, Shivaji)
+17. Mughal Administration (Mansabdari, revenue, provincial, judicial)
+18. Mughal Music and Paintings (Miniature painting, Tansen, Mughal school)
+19. Mughal Literature (Akbarnama, Ain-i-Akbari, Baburnama, Tuzuk-i-Jahangiri)
+20. Sikh Sect (10 Gurus, Guru Nanak to Guru Gobind Singh)
+21. Maratha State and Confederacy (Shivaji, Peshwas, Panipat 1761)
+22. Disintegration of Mughal Empire (Later Mughals, Nadir Shah, regional kingdoms)
+23. Provincial Dynasties (Bahmani, Gujarat, Malwa, Bengal, Jaunpur)
+
+YOUR TEACHING STYLE:
+- Always provide MEMORY TRICKS (mnemonics, stories, acronyms) for important facts
+- Give Bihar APO focused answers - highlight frequently asked topics
+- Make complex topics simple with examples and analogies
+- For dates/battles: always give a trick to remember
+- For rulers: give personality descriptions to make them memorable
+- Format answers clearly with emojis for easy reading
+- Always end answers with 1-2 exam tips or likely MCQ topics
+
+MEMORY TRICK FORMATS YOU USE:
+- Acronyms: "SaKaTaLo" for Delhi Sultanate dynasties
+- Stories: Connect dates to memorable events
+- Rhymes: Create simple rhymes for sequences
+- Visual associations: Create vivid mental images
+- Number patterns: Find patterns in important dates
+
+EXAM FOCUS:
+- Bihar APO syllabus emphasis
+- BPSC previous year question patterns
+- Most repeated topics in exams
+- Important MCQ points highlighted with ⭐
+- Trick questions and common mistakes warned
+
+Current topic focus: [TOPIC]
+Current mode: [MODE]
+
+If mode is QUIZ: Create 5 MCQ questions on the topic with answers
+If mode is TRICK: Focus only on memory tricks and mnemonics
+If mode is EXAM: Give exam strategy and most important points
+If mode is TIMELINE: Give chronological sequence with tricks
+If mode is COMPARE: Compare dynasties/rulers with tables
+If mode is LEARN: Comprehensive explanation with tricks included`;
+
+function setTopic(topic, btn) {
+  currentTopic = topic;
+  document.querySelectorAll('.topic-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  
+  addMessage(`Switched to: ${topic}`, 'user');
+  askAI(`Give me a comprehensive overview of ${topic} with the most important points for Bihar APO exam and memory tricks`);
+}
+
+function setMode(mode, btn) {
+  currentMode = mode;
+  document.querySelectorAll('.mode-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  
+  const modeMessages = {
+    'quiz': `Quiz me on ${currentTopic}`,
+    'trick': `Give me all memory tricks for ${currentTopic}`,
+    'exam': `What are the most important exam points for ${currentTopic} in Bihar APO`,
+    'timeline': `Give me the complete timeline of ${currentTopic} with memory tricks`,
+    'compare': `Compare the key aspects of ${currentTopic}`,
+    'learn': `Explain ${currentTopic} in detail`
+  };
+  
+  if (modeMessages[mode]) {
+    addMessage(modeMessages[mode], 'user');
+    askAI(modeMessages[mode]);
+  }
+}
+
+function quickAsk(question) {
+  addMessage(question, 'user');
+  askAI(question);
+}
+
+async function askAI(question) {
+  const loadingDiv = document.createElement('div');
+  loadingDiv.className = 'loading';
+  loadingDiv.textContent = '⚔️ Consulting the scrolls of history...';
+  document.getElementById('chatArea').appendChild(loadingDiv);
+  scrollToBottom();
+
+  history.push({
+    role: "user",
+    parts: [{ text: question }]
+  });
+
+  const systemPrompt = SYSTEM_PROMPT
+    .replace('[TOPIC]', currentTopic)
+    .replace('[MODE]', currentMode);
+
+  try {
+    const response = await fetch(
+      'https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent',
+      {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'x-goog-api-key': API_KEY
+        },
+        body: JSON.stringify({
+          system_instruction: {
+            parts: [{ text: systemPrompt }]
+          },
+          contents: history
+        })
+      }
+    );
+
+    const data = await response.json();
+    loadingDiv.remove();
+
+    if (data.candidates && data.candidates[0]) {
+      const reply = data.candidates[0].content.parts[0].text;
+      history.push({
+        role: "model",
+        parts: [{ text: reply }]
+      });
+      addMessage(reply, 'ai');
+    } else {
+      addMessage('Error getting response. Please try again.', 'ai');
+    }
+  } catch (err) {
+    loadingDiv.remove();
+    addMessage('Connection error. Check your internet.', 'ai');
+  }
+}
+
+function addMessage(text, sender) {
+  const chatArea = document.getElementById('chatArea');
+  const div = document.createElement('div');
+  div.className = `message ${sender === 'user' ? 'user-msg' : 'ai-msg'}`;
+  
+  if (sender === 'ai') {
+    div.innerHTML = formatText(text);
+  } else {
+    div.textContent = text;
+  }
+  
+  chatArea.appendChild(div);
+  scrollToBottom();
+}
+
+function formatText(text) {
+  return text
+    .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
+    .replace(/\*(.*?)\*/g, '<em>$1</em>')
+    .replace(/💡(.*?)(?=\n|$)/g, '<div class="trick">💡$1</div>')
+    .replace(/⭐(.*?)(?=\n|$)/g, '<div class="trick">⭐$1</div>')
+    .replace(/\n/g, '<br>');
+}
+
+function handleKey(e) {
+  if (e.key === 'Enter' && !e.shiftKey) {
+    e.preventDefault();
+    sendMessage();
+  }
+}
+
+function sendMessage() {
+  const input = document.getElementById('userInput');
+  const text = input.value.trim();
+  if (!text) return;
+  addMessage(text, 'user');
+  askAI(text);
+  input.value = '';
+}
+
+function scrollToBottom() {
+  const chatArea = document.getElementById('chatArea');
+  chatArea.scrollTop = chatArea.scrollHeight;
+}
+</script>
+</body>
+</html>
