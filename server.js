@@ -20,7 +20,7 @@ const server = http.createServer((req, res) => {
     fs.readFile(filePath, (err, data) => {
       if (err) { res.writeHead(404); res.end('Not found'); return; }
       const ext = path.extname(file);
-      const type = ext === '.html' ? 'text/html' : ext === '.css' ? 'text/css' : ext === '.js' ? 'text/javascript' : 'text/plain';
+      const type = ext === '.html' ? 'text/html' : ext === '.svg' ? 'image/svg+xml' : 'text/plain';
       res.writeHead(200, { 'Content-Type': type });
       res.end(data);
     });
@@ -31,12 +31,11 @@ const server = http.createServer((req, res) => {
     let body = '';
     req.on('data', chunk => body += chunk);
     req.on('end', () => {
-      const { prompt, history } = JSON.parse(body);
+      const { prompt, history, system } = JSON.parse(body);
       const contents = history && history.length > 0 ? history : [{ role: "user", parts: [{ text: prompt }] }];
+      const systemText = system || "You are a helpful assistant.";
       const payload = JSON.stringify({
-        system_instruction: {
-          parts: [{ text: "You are a helpful history teacher assistant. Explain history clearly and make it interesting for students." }]
-        },
+        system_instruction: { parts: [{ text: systemText }] },
         contents: contents
       });
       const options = {
