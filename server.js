@@ -9,23 +9,17 @@ const API_KEY = (process.env.GEMINI_KEY || '').replace(/[^\x20-\x7E]/g, '').trim
 console.log('Key loaded:', API_KEY ? 'YES' : 'NO');
 
 const PORT = process.env.PORT || 3000;
-
-// Simple in-memory user store
 let users = {};
 let tokens = {};
 
-function generateToken() {
-  return crypto.randomBytes(32).toString('hex');
-}
+function generateToken() { return crypto.randomBytes(32).toString('hex'); }
 
 const server = http.createServer((req, res) => {
   res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS, GET');
   res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization');
-
   if (req.method === 'OPTIONS') { res.end(); return; }
 
-  // Serve static files
   if (req.method === 'GET') {
     let file = req.url === '/' ? '/index.html' : req.url;
     if (file.includes('?')) file = file.split('?')[0];
@@ -34,7 +28,7 @@ const server = http.createServer((req, res) => {
       if (err) { res.writeHead(404); res.end('Not found'); return; }
       const ext = path.extname(file);
       const types = {'.html':'text/html','.css':'text/css','.js':'text/javascript','.svg':'image/svg+xml','.json':'application/json'};
-      res.writeHead(200, { 'Content-Type': types[ext] || 'text/plain' });
+      res.writeHead(200, {'Content-Type': types[ext] || 'text/plain'});
       res.end(data);
     });
     return;
@@ -49,18 +43,13 @@ const server = http.createServer((req, res) => {
       // REGISTER
       if (req.url === '/api/register') {
         const { name, email, password } = data;
-        if (!name || !email || !password) {
-          res.writeHead(400); res.end(JSON.stringify({ error: 'All fields required' })); return;
-        }
-        if (users[email]) {
-          res.writeHead(400); res.end(JSON.stringify({ error: 'Email already exists' })); return;
-        }
-        const user = { name, email, password, plan: 'free' };
-        users[email] = user;
+        if (!name || !email || !password) { res.writeHead(400); res.end(JSON.stringify({error:'All fields required'})); return; }
+        if (users[email]) { res.writeHead(400); res.end(JSON.stringify({error:'Email already exists'})); return; }
+        users[email] = { name, email, password, plan: 'free' };
         const token = generateToken();
         tokens[token] = email;
-        res.writeHead(200, { 'Content-Type': 'application/json' });
-        res.end(JSON.stringify({ token, user: { name, email, plan: 'free' } }));
+        res.writeHead(200, {'Content-Type':'application/json'});
+        res.end(JSON.stringify({token, user:{name, email, plan:'free'}}));
         return;
       }
 
@@ -68,46 +57,40 @@ const server = http.createServer((req, res) => {
       if (req.url === '/api/login') {
         const { email, password } = data;
         const user = users[email];
-        if (!user || user.password !== password) {
-          res.writeHead(401); res.end(JSON.stringify({ error: 'Invalid credentials' })); return;
-        }
+        if (!user || user.password !== password) { res.writeHead(401); res.end(JSON.stringify({error:'Invalid credentials'})); return; }
         const token = generateToken();
         tokens[token] = email;
-        res.writeHead(200, { 'Content-Type': 'application/json' });
-        res.end(JSON.stringify({ token, user: { name: user.name, email, plan: user.plan } }));
+        res.writeHead(200, {'Content-Type':'application/json'});
+        res.end(JSON.stringify({token, user:{name:user.name, email, plan:user.plan}}));
         return;
       }
 
       // UPGRADE
       if (req.url === '/api/upgrade') {
-        const authHeader = req.headers['authorization'] || '';
-        const token = authHeader.replace('Bearer ', '').trim();
+        const token = (req.headers['authorization'] || '').replace('Bearer ','').trim();
         const email = tokens[token];
-        if (!email || !users[email]) {
-          res.writeHead(401); res.end(JSON.stringify({ error: 'Unauthorized' })); return;
-        }
+        if (!email || !users[email]) { res.writeHead(401); res.end(JSON.stringify({error:'Unauthorized'})); return; }
         users[email].plan = data.plan;
         const newToken = generateToken();
         tokens[newToken] = email;
-        res.writeHead(200, { 'Content-Type': 'application/json' });
-        res.end(JSON.stringify({ token: newToken, user: { name: users[email].name, email, plan: data.plan } }));
+        res.writeHead(200, {'Content-Type':'application/json'});
+        res.end(JSON.stringify({token:newToken, user:{name:users[email].name, email, plan:data.plan}}));
         return;
       }
 
-      // ASK AI
-      if (req.url === '/api/ask') {
-        const { messages, system } = data;
-        const authHeader = req.headers['authorization'] || '';
-        const token = authHeader.replace('Bearer ', '').trim();
-        const email = tokens[token];
-        if (!email) { email = "guest"; }; if (false) {
-          res.writeHead(401); res.end(JSON.stringify({ error: 'Unauthorized' })); return;
-        }
+      // ASK - works for BOTH history.html (no auth) and index.html (with auth)
+      if (req.url === '/ask' || req.url === '/api/ask') {
+        const { prompt, history, system, messages } = data;
 
-        const groqMessages = [];
-        if (system) groqMessages.push({ role: 'system', content: system });
+        let groqMessages = [];
+        if (system) groqMessages.push({role:'system', content:system});
+
         if (messages && messages.length > 0) {
-          messages.forEach(m => groqMessages.push({ role: m.role, content: m.content }));
+          messages.forEach(m => groqMessages.push({role:m.role, content:m.content}));
+        } else if (history && history.length > 0) {
+          history.forEach(h => groqMessages.push({role: h.role === 'model' ? 'assistant' : 'user', content: h.parts[0].text}));
+        } else {
+          groqMessages.push({role:'user', content: prompt || 'Hello'});
         }
 
         const payload = JSON.stringify({
@@ -134,27 +117,28 @@ const server = http.createServer((req, res) => {
             try {
               const groqData = JSON.parse(resData);
               const reply = groqData.choices[0].message.content;
-              res.writeHead(200, { 'Content-Type': 'application/json' });
-              res.end(JSON.stringify({ reply }));
+              res.writeHead(200, {'Content-Type':'application/json'});
+              // Support both response formats
+              res.end(JSON.stringify({
+                reply,
+                candidates:[{content:{parts:[{text:reply}],role:'model'}}]
+              }));
             } catch(e) {
               res.writeHead(500);
-              res.end(JSON.stringify({ error: 'AI error' }));
+              res.end(JSON.stringify({error:'AI error'}));
             }
           });
         });
 
-        apiReq.on('error', e => {
-          res.writeHead(500);
-          res.end(JSON.stringify({ error: e.message }));
-        });
+        apiReq.on('error', e => { res.writeHead(500); res.end(JSON.stringify({error:e.message})); });
         apiReq.write(payload);
         apiReq.end();
         return;
       }
 
-      res.writeHead(404); res.end('Not found');
+      res.writeHead(404); res.end(JSON.stringify({error:'Not found'}));
     } catch(e) {
-      res.writeHead(400); res.end(JSON.stringify({ error: 'Bad request' }));
+      res.writeHead(400); res.end(JSON.stringify({error:'Bad request'}));
     }
   });
 });
