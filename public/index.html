@@ -3,528 +3,200 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Edun — AI Exam Preparation</title>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<title>Medieval India AI Tutor</title>
 <style>
 *{margin:0;padding:0;box-sizing:border-box}
-:root{--primary:#6366f1;--primary-dark:#4f46e5;--bg:#0f0f13;--bg2:#16161d;--bg3:#1e1e2a;--border:#2a2a3a;--text:#e2e2e8;--text2:#8888aa;--success:#10b981}
-body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);min-height:100vh}
-nav{position:fixed;top:0;width:100%;background:rgba(15,15,19,0.95);backdrop-filter:blur(20px);border-bottom:1px solid var(--border);z-index:1000;padding:15px 20px;display:flex;justify-content:space-between;align-items:center}
-.logo{font-size:24px;font-weight:800;background:linear-gradient(135deg,#6366f1,#0ea5e9);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
-.nav-btns{display:flex;gap:10px}
-.btn{padding:10px 20px;border-radius:10px;border:none;cursor:pointer;font-family:'Inter',sans-serif;font-weight:600;font-size:14px;transition:all 0.2s}
-.btn-outline{background:transparent;border:1px solid var(--border);color:var(--text)}
-.btn-primary{background:linear-gradient(135deg,#6366f1,#4f46e5);color:white}
-.btn-primary:hover{opacity:0.9;transform:translateY(-1px)}
-.btn-outline:hover{border-color:var(--primary);color:var(--primary)}
-.hero{padding:120px 20px 60px;text-align:center;max-width:800px;margin:0 auto}
-.hero-badge{display:inline-block;padding:6px 16px;background:rgba(99,102,241,0.1);border:1px solid rgba(99,102,241,0.3);border-radius:20px;font-size:12px;color:#6366f1;margin-bottom:20px;letter-spacing:1px}
-.hero h1{font-size:48px;font-weight:800;line-height:1.2;margin-bottom:20px}
-.hero h1 span{background:linear-gradient(135deg,#6366f1,#0ea5e9);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
-.hero p{font-size:18px;color:var(--text2);margin-bottom:40px;line-height:1.7}
-.hero-btns{display:flex;gap:15px;justify-content:center;flex-wrap:wrap}
-.section{padding:60px 20px;max-width:1000px;margin:0 auto}
-.section h2{font-size:28px;font-weight:700;text-align:center;margin-bottom:10px}
-.section p{color:var(--text2);text-align:center;margin-bottom:40px}
-.exams-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:15px}
-.exam-card{background:var(--bg2);border:1px solid var(--border);border-radius:16px;padding:20px;text-align:center;cursor:pointer;transition:all 0.3s}
-.exam-card:hover{border-color:var(--primary);transform:translateY(-3px);box-shadow:0 10px 30px rgba(99,102,241,0.2)}
-.exam-icon{font-size:32px;margin-bottom:10px}
-.exam-name{font-weight:700;font-size:16px;margin-bottom:5px}
-.exam-desc{font-size:11px;color:var(--text2)}
-.exam-badge{display:inline-block;margin-top:8px;padding:3px 10px;border-radius:10px;font-size:10px;font-weight:600}
-.badge-free{background:rgba(16,185,129,0.1);color:#10b981;border:1px solid rgba(16,185,129,0.3)}
-.badge-pro{background:rgba(99,102,241,0.1);color:#6366f1;border:1px solid rgba(99,102,241,0.3)}
-.badge-elite{background:rgba(245,158,11,0.1);color:#f59e0b;border:1px solid rgba(245,158,11,0.3)}
-.pricing-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:20px;margin-top:40px}
-.price-card{background:var(--bg2);border:1px solid var(--border);border-radius:20px;padding:30px;text-align:center;position:relative;transition:all 0.3s}
-.price-card.popular{border-color:var(--primary);box-shadow:0 0 30px rgba(99,102,241,0.2)}
-.popular-badge{position:absolute;top:-12px;left:50%;transform:translateX(-50%);background:linear-gradient(135deg,#6366f1,#4f46e5);color:white;padding:4px 16px;border-radius:20px;font-size:11px;font-weight:600;white-space:nowrap}
-.price-name{font-size:14px;color:var(--text2);margin-bottom:10px;letter-spacing:1px;text-transform:uppercase}
-.price-amount{font-size:42px;font-weight:800;margin-bottom:5px}
-.price-amount span{font-size:16px;font-weight:400;color:var(--text2)}
-.price-period{font-size:12px;color:var(--text2);margin-bottom:25px}
-.price-features{list-style:none;margin-bottom:25px;text-align:left}
-.price-features li{padding:8px 0;border-bottom:1px solid var(--border);font-size:13px;display:flex;align-items:center;gap:8px}
-.price-features li:last-child{border:none}
-.check{color:#10b981}.cross{color:#ef4444}
-.features-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:20px;margin-top:40px}
-.feature-card{background:var(--bg2);border:1px solid var(--border);border-radius:16px;padding:20px}
-.feature-icon{font-size:28px;margin-bottom:12px}
-.feature-title{font-weight:700;margin-bottom:8px}
-.feature-desc{font-size:13px;color:var(--text2);line-height:1.6}
-.stats{background:var(--bg2);border-top:1px solid var(--border);border-bottom:1px solid var(--border);padding:40px 20px;margin:40px 0}
-.stats-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:20px;max-width:800px;margin:0 auto;text-align:center}
-.stat-number{font-size:36px;font-weight:800;background:linear-gradient(135deg,#6366f1,#0ea5e9);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
-.stat-label{font-size:13px;color:var(--text2);margin-top:5px}
-footer{background:var(--bg2);border-top:1px solid var(--border);padding:30px 20px;text-align:center;color:var(--text2);font-size:13px}
-.modal{display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.8);z-index:2000;align-items:center;justify-content:center;padding:20px}
-.modal.active{display:flex}
-.modal-box{background:var(--bg2);border:1px solid var(--border);border-radius:20px;padding:30px;width:100%;max-width:400px}
-.modal-title{font-size:22px;font-weight:700;margin-bottom:5px}
-.modal-sub{color:var(--text2);font-size:13px;margin-bottom:25px}
-.input-group{margin-bottom:15px}
-.input-group label{display:block;font-size:13px;margin-bottom:6px;color:var(--text2)}
-.input-group input{width:100%;padding:12px 15px;background:var(--bg3);border:1px solid var(--border);border-radius:10px;color:var(--text);font-family:'Inter',sans-serif;font-size:14px;outline:none}
-.input-group input:focus{border-color:var(--primary)}
-.modal-footer{margin-top:15px;text-align:center;font-size:13px;color:var(--text2)}
-.modal-footer a{color:var(--primary);cursor:pointer}
-.error-msg{color:#ef4444;font-size:12px;margin-top:10px;display:none}
-.close-modal{float:right;cursor:pointer;color:var(--text2);font-size:20px;line-height:1}
-.dashboard{display:none;min-height:100vh;padding-top:70px}
-.dash-layout{display:flex;min-height:calc(100vh - 70px)}
-.sidebar{width:240px;background:var(--bg2);border-right:1px solid var(--border);padding:20px;position:fixed;height:calc(100vh - 70px);overflow-y:auto}
-.sidebar-item{display:flex;align-items:center;gap:10px;padding:12px 15px;border-radius:10px;cursor:pointer;margin-bottom:5px;font-size:14px;color:var(--text2);transition:all 0.2s}
-.sidebar-item:hover,.sidebar-item.active{background:rgba(99,102,241,0.1);color:var(--primary)}
-.sidebar-item span{font-size:18px}
-.dash-content{margin-left:240px;flex:1;padding:25px}
-.dash-header{margin-bottom:25px}
-.dash-title{font-size:24px;font-weight:700}
-.dash-sub{color:var(--text2);font-size:14px}
-.exam-header{background:var(--bg2);border:1px solid var(--border);border-radius:16px;padding:20px;margin-bottom:20px;display:flex;align-items:center;gap:15px}
-.exam-header-icon{font-size:40px}
-.exam-header-info h2{font-size:20px;font-weight:700}
-.exam-header-info p{color:var(--text2);font-size:13px}
-.topics-list{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:12px;margin-bottom:20px}
-.topic-item{background:var(--bg2);border:1px solid var(--border);border-radius:12px;padding:15px;cursor:pointer;transition:all 0.2s}
-.topic-item:hover{border-color:var(--primary);background:rgba(99,102,241,0.05)}
-.topic-name{font-weight:600;font-size:14px;margin-bottom:4px}
-.topic-sub{font-size:12px;color:var(--text2)}
-.chat-container{background:var(--bg2);border:1px solid var(--border);border-radius:16px;overflow:hidden}
-.chat-modes{display:flex;gap:8px;padding:15px;border-bottom:1px solid var(--border);flex-wrap:wrap}
-.mode-btn{padding:7px 14px;border-radius:20px;border:1px solid var(--border);background:transparent;color:var(--text2);font-size:12px;cursor:pointer;font-family:'Inter',sans-serif;transition:all 0.2s}
-.mode-btn.active{background:var(--primary);border-color:var(--primary);color:white}
-.chat-messages{height:400px;overflow-y:auto;padding:20px;display:flex;flex-direction:column;gap:15px}
-.msg{max-width:85%;padding:12px 16px;border-radius:12px;font-size:14px;line-height:1.7}
-.msg-user{background:linear-gradient(135deg,#6366f1,#4f46e5);color:white;align-self:flex-end;border-radius:12px 12px 4px 12px}
-.msg-ai{background:var(--bg3);border:1px solid var(--border);align-self:flex-start;border-radius:12px 12px 12px 4px}
-.msg-ai .trick-box{background:rgba(99,102,241,0.1);border-left:3px solid var(--primary);padding:10px;margin-top:10px;border-radius:4px;font-style:italic;font-size:13px}
-.chat-input-area{padding:15px;border-top:1px solid var(--border);display:flex;gap:10px}
-.chat-input{flex:1;padding:12px 15px;background:var(--bg3);border:1px solid var(--border);border-radius:10px;color:var(--text);font-family:'Inter',sans-serif;font-size:14px;outline:none;resize:none;height:48px}
-.chat-input:focus{border-color:var(--primary)}
-.send-btn{padding:12px 20px;background:linear-gradient(135deg,#6366f1,#4f46e5);border:none;border-radius:10px;color:white;cursor:pointer;font-size:18px}
-.loading-dots{display:inline-flex;gap:4px;padding:12px 16px}
-.dot{width:8px;height:8px;background:var(--text2);border-radius:50%;animation:bounce 1.4s infinite}
-.dot:nth-child(2){animation-delay:0.2s}
-.dot:nth-child(3){animation-delay:0.4s}
-@keyframes bounce{0%,80%,100%{transform:translateY(0)}40%{transform:translateY(-10px)}}
-.plan-badge{display:inline-block;padding:3px 10px;border-radius:20px;font-size:11px;font-weight:700}
-.plan-free{background:rgba(16,185,129,0.1);color:#10b981}
-.plan-pro{background:rgba(99,102,241,0.1);color:#6366f1}
-.plan-elite{background:rgba(245,158,11,0.1);color:#f59e0b}
-@media(max-width:768px){.hero h1{font-size:32px}.sidebar{width:100%;height:auto;position:relative}.dash-layout{flex-direction:column}.dash-content{margin-left:0}}
+body{background:#0a0a0f;color:#e0c080;font-family:Georgia,serif;min-height:100vh;display:flex;flex-direction:column}
+.header{background:linear-gradient(135deg,#1a0a00,#2d1400);border-bottom:2px solid #8b4513;padding:15px 20px;text-align:center}
+.header h1{font-size:20px;color:#ffd700;letter-spacing:2px}
+.header p{font-size:11px;color:#a0784a;margin-top:4px}
+.topics{display:flex;flex-wrap:wrap;gap:8px;padding:15px;background:#0f0800;border-bottom:1px solid #3d2000}
+.topic-btn{padding:6px 12px;background:#1a0d00;border:1px solid #8b4513;border-radius:15px;color:#e0c080;font-size:11px;cursor:pointer;transition:all .2s}
+.topic-btn:hover,.topic-btn.active{background:#8b4513;color:#ffd700}
+.mode-bar{display:flex;gap:10px;padding:10px 15px;background:#080500;border-bottom:1px solid #2d1400;flex-wrap:wrap}
+.mode-btn{padding:8px 15px;border:1px solid #8b4513;background:transparent;color:#e0c080;border-radius:20px;font-size:12px;cursor:pointer}
+.mode-btn.active{background:#8b4513;color:#ffd700}
+.chat-area{flex:1;overflow-y:auto;padding:15px;display:flex;flex-direction:column;gap:12px}
+.message{max-width:90%;padding:12px 15px;border-radius:12px;font-size:14px;line-height:1.7}
+.user-msg{background:#1a0d00;border:1px solid #8b4513;align-self:flex-end;color:#ffd700}
+.ai-msg{background:#0f0800;border:1px solid #3d2000;align-self:flex-start;color:#e0c080}
+.trick{background:#1a1000;border-left:3px solid #ffd700;padding:8px 12px;margin-top:10px;border-radius:4px;font-style:italic;color:#ffd700;font-size:13px}
+.input-area{padding:15px;background:#0a0500;border-top:1px solid #3d2000;display:flex;gap:10px}
+textarea{flex:1;padding:12px;background:#1a0d00;border:1px solid #8b4513;border-radius:10px;color:#e0c080;font-size:14px;resize:none;height:60px;outline:none;font-family:Georgia,serif}
+textarea::placeholder{color:#5a3a1a}
+.send-btn{padding:12px 20px;background:#8b4513;border:none;border-radius:10px;color:#ffd700;cursor:pointer;font-size:18px}
+.quick-btns{display:flex;flex-wrap:wrap;gap:8px;padding:10px 15px;background:#080500}
+.quick-btn{padding:6px 12px;background:#0f0800;border:1px solid #5a3a1a;border-radius:15px;color:#a08040;font-size:11px;cursor:pointer}
+.quick-btn:hover{border-color:#ffd700;color:#ffd700}
+.loading{color:#8b4513;font-style:italic;font-size:13px;padding:10px}
 </style>
 </head>
 <body>
-
-<nav id="navbar">
-  <div class="logo">Edun</div>
-  <div class="nav-btns" id="navBtns">
-    <button class="btn btn-outline" onclick="showModal('login')">Login</button>
-    <button class="btn btn-primary" onclick="showModal('register')">Get Started Free</button>
-  </div>
-</nav>
-
-<div id="landingPage">
-  <div class="hero">
-    <div class="hero-badge">⚡ AI-Powered Exam Preparation</div>
-    <h1>Crack Any Exam With<br/><span>Your Personal AI Tutor</span></h1>
-    <p>From 10th Board to JEE, NEET & SSC — get personalized AI guidance, memory tricks, mock tests and exam strategies. Study smarter, not harder.</p>
-    <div class="hero-btns">
-      <button class="btn btn-primary" style="font-size:16px;padding:14px 30px" onclick="showModal('register')">Start Free Today →</button>
-      <button class="btn btn-outline" style="font-size:16px;padding:14px 30px" onclick="document.getElementById('exams').scrollIntoView({behavior:'smooth'})">View Exams</button>
-    </div>
-  </div>
-
-  <div class="stats">
-    <div class="stats-grid">
-      <div><div class="stat-number">6+</div><div class="stat-label">Exams Covered</div></div>
-      <div><div class="stat-number">100%</div><div class="stat-label">AI Powered</div></div>
-      <div><div class="stat-number">24/7</div><div class="stat-label">Available</div></div>
-      <div><div class="stat-number">₹99</div><div class="stat-label">Starting Price</div></div>
-    </div>
-  </div>
-
-  <div class="section" id="exams">
-    <h2>Choose Your Exam</h2>
-    <p>Specialized AI tutor for each exam — syllabus, tricks, mock tests and more</p>
-    <div class="exams-grid">
-      <div class="exam-card" onclick="selectExamLanding('10th CBSE')"><div class="exam-icon">📚</div><div class="exam-name">10th CBSE</div><div class="exam-desc">Board Examination</div><span class="exam-badge badge-free">FREE</span></div>
-      <div class="exam-card" onclick="selectExamLanding('12th CBSE')"><div class="exam-icon">🎓</div><div class="exam-name">12th CBSE</div><div class="exam-desc">Board Examination</div><span class="exam-badge badge-free">FREE</span></div>
-      <div class="exam-card" onclick="selectExamLanding('SSC CGL')"><div class="exam-icon">🏛️</div><div class="exam-name">SSC CGL</div><div class="exam-desc">Government Job</div><span class="exam-badge badge-pro">PRO</span></div>
-      <div class="exam-card" onclick="selectExamLanding('NEET')"><div class="exam-icon">🔬</div><div class="exam-name">NEET</div><div class="exam-desc">Medical Entrance</div><span class="exam-badge badge-pro">PRO</span></div>
-      <div class="exam-card" onclick="selectExamLanding('JEE')"><div class="exam-icon">⚙️</div><div class="exam-name">JEE</div><div class="exam-desc">Engineering Entrance</div><span class="exam-badge badge-elite">ELITE</span></div>
-      <div class="exam-card" onclick="selectExamLanding('CUET')"><div class="exam-icon">🏫</div><div class="exam-name">CUET</div><div class="exam-desc">Central Universities</div><span class="exam-badge badge-elite">ELITE</span></div>
-    </div>
-  </div>
-
-  <div class="section">
-    <h2>Everything You Need to Crack Your Exam</h2>
-    <p>Powered by advanced AI — better than any coaching center</p>
-    <div class="features-grid">
-      <div class="feature-card"><div class="feature-icon">🧠</div><div class="feature-title">Memory Tricks</div><div class="feature-desc">Smart mnemonics to remember complex topics instantly</div></div>
-      <div class="feature-card"><div class="feature-icon">📝</div><div class="feature-title">Topic Wise AI</div><div class="feature-desc">Deep dive into any topic with AI that knows your exam</div></div>
-      <div class="feature-card"><div class="feature-icon">❓</div><div class="feature-title">Mock Tests</div><div class="feature-desc">Practice with exam-pattern MCQs and instant explanations</div></div>
-      <div class="feature-card"><div class="feature-icon">📅</div><div class="feature-title">Previous Year Questions</div><div class="feature-desc">Most repeated questions with detailed solutions</div></div>
-      <div class="feature-card"><div class="feature-icon">⚡</div><div class="feature-title">Quick Revision</div><div class="feature-desc">Last minute revision notes and expected questions</div></div>
-      <div class="feature-card"><div class="feature-icon">🎯</div><div class="feature-title">Exam Strategy</div><div class="feature-desc">Time management and scoring strategy for your exam</div></div>
-    </div>
-  </div>
-
-  <div class="section" id="pricing">
-    <h2>Simple Transparent Pricing</h2>
-    <p>No hidden charges — cancel anytime</p>
-    <div class="pricing-grid">
-      <div class="price-card">
-        <div class="price-name">Starter</div>
-        <div class="price-amount">₹0<span>/mo</span></div>
-        <div class="price-period">Free forever</div>
-        <ul class="price-features">
-          <li><span class="check">✓</span> 10th & 12th CBSE</li>
-          <li><span class="check">✓</span> Basic AI tutoring</li>
-          <li><span class="check">✓</span> 20 questions/day</li>
-          <li><span class="cross">✗</span> SSC CGL & NEET</li>
-          <li><span class="cross">✗</span> Mock tests</li>
-        </ul>
-        <button class="btn btn-outline" style="width:100%" onclick="showModal('register')">Get Started Free</button>
-      </div>
-      <div class="price-card popular">
-        <div class="popular-badge">⭐ Most Popular</div>
-        <div class="price-name">Pro</div>
-        <div class="price-amount">₹99<span>/mo</span></div>
-        <div class="price-period">Billed monthly</div>
-        <ul class="price-features">
-          <li><span class="check">✓</span> All Free features</li>
-          <li><span class="check">✓</span> SSC CGL & NEET</li>
-          <li><span class="check">✓</span> Unlimited questions</li>
-          <li><span class="check">✓</span> Mock test generator</li>
-          <li><span class="check">✓</span> Previous year Qs</li>
-        </ul>
-        <button class="btn btn-primary" style="width:100%" onclick="handleUpgrade('pro')">Upgrade to Pro</button>
-      </div>
-      <div class="price-card">
-        <div class="price-name">Elite</div>
-        <div class="price-amount">₹199<span>/mo</span></div>
-        <div class="price-period">Billed monthly</div>
-        <ul class="price-features">
-          <li><span class="check">✓</span> All Pro features</li>
-          <li><span class="check">✓</span> JEE & CUET</li>
-          <li><span class="check">✓</span> All 6 exams</li>
-          <li><span class="check">✓</span> Advanced AI</li>
-          <li><span class="check">✓</span> Study planner</li>
-        </ul>
-        <button class="btn btn-primary" style="width:100%;background:linear-gradient(135deg,#f59e0b,#d97706)" onclick="handleUpgrade('elite')">Upgrade to Elite</button>
-      </div>
-    </div>
-  </div>
-
-  <footer>
-    <p>© 2025 Edun • AI-Powered Exam Preparation • Made in India 🇮🇳</p>
-    <p style="margin-top:8px">contact@edun.in • Privacy Policy • Terms of Service</p>
-  </footer>
+<div class="header">
+  <h1>⚔️ Medieval India AI Tutor</h1>
+  <p>Bihar APO & UPSC Specialist • Smart Memory Tricks • Expert Guidance</p>
 </div>
-
-<div id="dashboard" class="dashboard">
-  <div class="dash-layout">
-    <div class="sidebar">
-      <div style="margin-bottom:20px">
-        <div style="font-weight:700;font-size:16px" id="sidebarName">Student</div>
-        <div id="sidebarPlan" class="plan-badge plan-free" style="margin-top:5px">FREE</div>
-      </div>
-      <div class="sidebar-item active" onclick="showSection('home')"><span>🏠</span> Home</div>
-      <div class="sidebar-item" onclick="showSection('exams')"><span>📚</span> My Exams</div>
-      <div class="sidebar-item" onclick="showSection('practice')"><span>❓</span> Practice</div>
-      <div class="sidebar-item" onclick="showSection('revision')"><span>⚡</span> Quick Revision</div>
-      <div class="sidebar-item" onclick="showSection('pricing')"><span>👑</span> Upgrade Plan</div>
-      <div class="sidebar-item" onclick="showSection('settings')"><span>⚙️</span> Settings</div>
-      <div class="sidebar-item" style="margin-top:20px;color:#ef4444" onclick="logout()"><span>🚪</span> Logout</div>
-    </div>
-    <div class="dash-content">
-      <div id="section-home">
-        <div class="dash-header"><div class="dash-title" id="welcomeMsg">Welcome back! 👋</div><div class="dash-sub">What do you want to study today?</div></div>
-        <div class="exams-grid" id="dashExamsGrid"></div>
-      </div>
-      <div id="section-exams" style="display:none">
-        <div class="dash-header"><div class="dash-title">My Exams</div><div class="dash-sub">Select an exam to start studying</div></div>
-        <div class="exams-grid" id="allExamsGrid"></div>
-      </div>
-      <div id="section-examview" style="display:none">
-        <button class="btn btn-outline" style="margin-bottom:15px;font-size:13px" onclick="showSection('exams')">← Back</button>
-        <div class="exam-header" id="examHeader"></div>
-        <div class="topics-list" id="topicsList"></div>
-        <div class="chat-container">
-          <div class="chat-modes">
-            <button class="mode-btn active" onclick="setMode('learn',this)">📚 Learn</button>
-            <button class="mode-btn" onclick="setMode('trick',this)">🧠 Tricks</button>
-            <button class="mode-btn" onclick="setMode('quiz',this)">❓ Quiz</button>
-            <button class="mode-btn" onclick="setMode('pyq',this)">📋 PYQ</button>
-            <button class="mode-btn" onclick="setMode('strategy',this)">🎯 Strategy</button>
-            <button class="mode-btn" onclick="setMode('revision',this)">⚡ Revision</button>
-          </div>
-          <div class="chat-messages" id="chatMessages">
-            <div class="msg msg-ai">👋 Select a topic above or ask me anything!</div>
-          </div>
-          <div class="chat-input-area">
-            <textarea class="chat-input" id="chatInput" placeholder="Ask anything..." onkeypress="handleChatKey(event)"></textarea>
-            <button class="send-btn" onclick="sendMessage()">➤</button>
-          </div>
-        </div>
-      </div>
-      <div id="section-practice" style="display:none">
-        <div class="dash-header"><div class="dash-title">Practice & Mock Tests</div><div class="dash-sub">Test your knowledge</div></div>
-        <div class="exams-grid" id="practiceExamsGrid"></div>
-      </div>
-      <div id="section-revision" style="display:none">
-        <div class="dash-header"><div class="dash-title">Quick Revision</div><div class="dash-sub">Last minute revision</div></div>
-        <div class="exams-grid" id="revisionExamsGrid"></div>
-      </div>
-      <div id="section-pricing" style="display:none">
-        <div class="dash-header"><div class="dash-title">Upgrade Your Plan</div></div>
-        <div class="pricing-grid">
-          <div class="price-card"><div class="price-name">Starter</div><div class="price-amount">₹0<span>/mo</span></div><ul class="price-features"><li><span class="check">✓</span> 10th & 12th CBSE</li><li><span class="check">✓</span> 20 questions/day</li><li><span class="cross">✗</span> SSC & NEET</li></ul><button class="btn btn-outline" style="width:100%" disabled>Current Plan</button></div>
-          <div class="price-card popular"><div class="popular-badge">⭐ Most Popular</div><div class="price-name">Pro</div><div class="price-amount">₹99<span>/mo</span></div><ul class="price-features"><li><span class="check">✓</span> SSC CGL & NEET</li><li><span class="check">✓</span> Unlimited questions</li><li><span class="check">✓</span> Mock tests</li></ul><button class="btn btn-primary" style="width:100%" onclick="handleUpgrade('pro')">Upgrade ₹99/mo</button></div>
-          <div class="price-card"><div class="price-name">Elite</div><div class="price-amount">₹199<span>/mo</span></div><ul class="price-features"><li><span class="check">✓</span> All 6 exams</li><li><span class="check">✓</span> JEE & CUET</li><li><span class="check">✓</span> Advanced AI</li></ul><button class="btn btn-primary" style="width:100%;background:linear-gradient(135deg,#f59e0b,#d97706)" onclick="handleUpgrade('elite')">Upgrade ₹199/mo</button></div>
-        </div>
-      </div>
-      <div id="section-settings" style="display:none">
-        <div class="dash-header"><div class="dash-title">Settings</div></div>
-        <div style="background:var(--bg2);border:1px solid var(--border);border-radius:16px;padding:25px;max-width:500px">
-          <div style="margin-bottom:20px"><div style="font-size:13px;color:var(--text2);margin-bottom:5px">Full Name</div><div style="font-weight:600" id="settingsName">-</div></div>
-          <div style="margin-bottom:20px"><div style="font-size:13px;color:var(--text2);margin-bottom:5px">Email</div><div style="font-weight:600" id="settingsEmail">-</div></div>
-          <div style="margin-bottom:20px"><div style="font-size:13px;color:var(--text2);margin-bottom:5px">Current Plan</div><div id="settingsPlan" class="plan-badge plan-free">FREE</div></div>
-          <button class="btn btn-outline" style="width:100%;margin-top:10px;color:#ef4444;border-color:#ef4444" onclick="logout()">Logout</button>
-        </div>
-      </div>
-    </div>
+<div class="topics">
+  <button class="topic-btn active" onclick="setTopic('General Medieval Indian History',this)">All Topics</button>
+  <button class="topic-btn" onclick="setTopic('Muslim Invasion of India',this)">Muslim Invasion</button>
+  <button class="topic-btn" onclick="setTopic('Slave Dynasty Delhi Sultanate',this)">Slave Dynasty</button>
+  <button class="topic-btn" onclick="setTopic('Khalji Dynasty',this)">Khalji Dynasty</button>
+  <button class="topic-btn" onclick="setTopic('Tughluq Dynasty',this)">Tughluq Dynasty</button>
+  <button class="topic-btn" onclick="setTopic('Lodi Dynasty',this)">Lodi Dynasty</button>
+  <button class="topic-btn" onclick="setTopic('Vijayanagara Empire',this)">Vijayanagara</button>
+  <button class="topic-btn" onclick="setTopic('Delhi Sultanate Administration',this)">DS Admin</button>
+  <button class="topic-btn" onclick="setTopic('Delhi Sultanate Art and Architecture',this)">DS Art</button>
+  <button class="topic-btn" onclick="setTopic('Bhakti and Sufi Movement',this)">Bhakti & Sufi</button>
+  <button class="topic-btn" onclick="setTopic('Mughal Dynasty Babur',this)">Babur</button>
+  <button class="topic-btn" onclick="setTopic('Humayun and Sher Shah Suri',this)">Humayun</button>
+  <button class="topic-btn" onclick="setTopic('Akbar Mughal Emperor',this)">Akbar</button>
+  <button class="topic-btn" onclick="setTopic('Jahangir Mughal Emperor',this)">Jahangir</button>
+  <button class="topic-btn" onclick="setTopic('Shah Jahan Mughal Emperor',this)">Shah Jahan</button>
+  <button class="topic-btn" onclick="setTopic('Aurangzeb Mughal Emperor',this)">Aurangzeb</button>
+  <button class="topic-btn" onclick="setTopic('Mughal Administration',this)">Mughal Admin</button>
+  <button class="topic-btn" onclick="setTopic('Mughal Music and Paintings',this)">Mughal Art</button>
+  <button class="topic-btn" onclick="setTopic('Maratha State and Confederacy',this)">Maratha</button>
+  <button class="topic-btn" onclick="setTopic('Sikh Sect Gurus',this)">Sikh Sect</button>
+  <button class="topic-btn" onclick="setTopic('Disintegration of Mughal Empire',this)">Disintegration</button>
+</div>
+<div class="mode-bar">
+  <button class="mode-btn active" onclick="setMode('learn',this)">📚 Learn</button>
+  <button class="mode-btn" onclick="setMode('trick',this)">🧠 Memory Tricks</button>
+  <button class="mode-btn" onclick="setMode('quiz',this)">❓ Quiz Me</button>
+  <button class="mode-btn" onclick="setMode('exam',this)">📝 Exam Tips</button>
+  <button class="mode-btn" onclick="setMode('timeline',this)">📅 Timeline</button>
+</div>
+<div class="quick-btns">
+  <button class="quick-btn" onclick="quickAsk('Give me memory tricks for important battles and dates')">🎯 Battle Tricks</button>
+  <button class="quick-btn" onclick="quickAsk('Most important MCQ topics for Bihar APO exam')">📋 APO MCQs</button>
+  <button class="quick-btn" onclick="quickAsk('Quick revision summary of current topic')">⚡ Quick Revision</button>
+  <button class="quick-btn" onclick="quickAsk('Important years to remember with tricks')">📅 Key Years</button>
+  <button class="quick-btn" onclick="quickAsk('Most likely exam questions on this topic')">🎲 Likely Questions</button>
+</div>
+<div class="chat-area" id="chatArea">
+  <div class="message ai-msg">
+    🙏 <strong>Namaste! Welcome to Medieval India AI Tutor!</strong><br><br>
+    Specialized for <strong>Bihar APO, BPSC, UPSC</strong> exams.<br><br>
+    ✅ All dynasties covered<br>
+    🧠 Smart memory tricks<br>
+    ❓ Practice MCQs<br>
+    📝 Exam focused revision<br><br>
+    <div class="trick">💡 Quick Trick: Remember Delhi Sultanate dynasties as <strong>"SaKaTaLo"</strong> — Slave, Khalji, Tughluq, Lodi!</div>
   </div>
 </div>
-
-<div class="modal" id="loginModal">
-  <div class="modal-box">
-    <span class="close-modal" onclick="closeModal('login')">×</span>
-    <div class="modal-title">Welcome back! 👋</div>
-    <div class="modal-sub">Login to continue</div>
-    <div class="input-group"><label>Email</label><input type="email" id="loginEmail" placeholder="your@email.com"/></div>
-    <div class="input-group"><label>Password</label><input type="password" id="loginPassword" placeholder="••••••••"/></div>
-    <div class="error-msg" id="loginError">Invalid credentials</div>
-    <button class="btn btn-primary" style="width:100%;margin-top:5px" onclick="login()">Login →</button>
-    <div class="modal-footer">No account? <a onclick="switchModal('login','register')">Register free</a></div>
-  </div>
+<div class="input-area">
+  <textarea id="userInput" placeholder="Ask about any topic, request memory tricks, or say quiz me..." onkeypress="handleKey(event)"></textarea>
+  <button class="send-btn" onclick="sendMessage()">➤</button>
 </div>
-
-<div class="modal" id="registerModal">
-  <div class="modal-box">
-    <span class="close-modal" onclick="closeModal('register')">×</span>
-    <div class="modal-title">Create Account 🚀</div>
-    <div class="modal-sub">Start free preparation</div>
-    <div class="input-group"><label>Full Name</label><input type="text" id="regName" placeholder="Your name"/></div>
-    <div class="input-group"><label>Email</label><input type="email" id="regEmail" placeholder="your@email.com"/></div>
-    <div class="input-group"><label>Password</label><input type="password" id="regPassword" placeholder="Create password"/></div>
-    <div class="error-msg" id="registerError">Error creating account</div>
-    <button class="btn btn-primary" style="width:100%;margin-top:5px" onclick="register()">Create Free Account →</button>
-    <div class="modal-footer">Have account? <a onclick="switchModal('register','login')">Login</a></div>
-  </div>
-</div>
-
-<div class="modal" id="paymentModal">
-  <div class="modal-box">
-    <span class="close-modal" onclick="closeModal('payment')">×</span>
-    <div class="modal-title">Upgrade Plan 👑</div>
-    <div class="modal-sub" id="paymentSub">Complete payment to unlock</div>
-    <div style="background:var(--bg3);border-radius:12px;padding:20px;margin-bottom:20px;text-align:center">
-      <div style="font-size:13px;color:var(--text2)">Pay via UPI</div>
-      <div style="font-size:24px;font-weight:800;margin:10px 0" id="paymentAmount">₹99</div>
-      <div style="font-size:18px;font-weight:700;color:var(--primary)">edun@upi</div>
-      <div style="font-size:12px;color:var(--text2);margin-top:8px">Send to above UPI ID</div>
-    </div>
-    <div class="input-group"><label>UPI Transaction ID</label><input type="text" id="transactionId" placeholder="Enter transaction ID"/></div>
-    <button class="btn btn-primary" style="width:100%" onclick="confirmPayment()">Confirm Payment →</button>
-    <div style="font-size:12px;color:var(--text2);margin-top:10px;text-align:center">Verified manually within 24 hours</div>
-  </div>
-</div>
-
 <script>
-const EXAMS={
-  '10th CBSE':{icon:'📚',desc:'Class 10 Board Examination',plan:'free',topics:['Mathematics','Science - Physics','Science - Chemistry','Science - Biology','Social Science - History','Social Science - Geography','English','Hindi']},
-  '12th CBSE':{icon:'🎓',desc:'Class 12 Board Examination',plan:'free',topics:['Physics','Chemistry','Mathematics','Biology','Accountancy','Business Studies','Economics','English']},
-  'SSC CGL':{icon:'🏛️',desc:'Combined Graduate Level',plan:'pro',topics:['General Intelligence & Reasoning','General Awareness','Quantitative Aptitude','English Comprehension','Current Affairs']},
-  'NEET':{icon:'🔬',desc:'National Medical Entrance',plan:'pro',topics:['Physics - Mechanics','Physics - Modern Physics','Chemistry - Organic','Chemistry - Inorganic','Biology - Botany','Biology - Zoology','Biology - Genetics']},
-  'JEE':{icon:'⚙️',desc:'Joint Entrance Examination',plan:'elite',topics:['Physics - Mechanics','Physics - Electrostatics','Chemistry - Organic','Chemistry - Physical','Mathematics - Calculus','Mathematics - Algebra','Mathematics - Coordinate Geometry']},
-  'CUET':{icon:'🏫',desc:'Central University Entrance',plan:'elite',topics:['English Language','General Test','Numerical Ability','Logical Reasoning','General Knowledge','Current Affairs']}
-};
+let currentTopic='General Medieval Indian History';
+let currentMode='learn';
+let history=[];
 
-const SYSTEM_PROMPTS={
-  learn:'You are an expert AI tutor for Indian competitive exams. Provide clear detailed explanations. Always include memory tricks marked with 💡. Highlight exam points with ⭐.',
-  trick:'You are a memory technique expert. Provide ONLY memory tricks, mnemonics, acronyms and visual associations. Make them fun and exam-specific.',
-  quiz:'Generate 5 MCQ questions exactly like the real exam pattern. Format: Question, 4 options A/B/C/D, correct answer with explanation.',
-  pyq:'Share the most important frequently repeated previous year questions. Explain why each concept is repeatedly tested.',
-  strategy:'Provide specific time management tips, marking scheme strategy, common mistakes to avoid and scoring tips.',
-  revision:'Create a concise bullet-point revision summary. Include key facts, important dates, formulae and expected questions.'
-};
+const SYSTEM=`You are an expert Medieval Indian History tutor for Bihar APO, BPSC, UPSC exams.
 
-let currentUser=null,currentExam=null,currentTopic=null,currentMode='learn',chatHistory=[],selectedPlan=null;
+Topics: Muslim Invasion, Delhi Sultanate (Slave/Khalji/Tughluq/Lodi), Vijayanagara, Bhakti-Sufi, All Mughal emperors, Maratha, Sikh Sect, Provincial Dynasties.
 
-async function register(){
-  const name=document.getElementById('regName').value.trim();
-  const email=document.getElementById('regEmail').value.trim();
-  const password=document.getElementById('regPassword').value;
-  if(!name||!email||!password){showError('registerError','All fields required!');return;}
-  try{
-    const res=await fetch('/api/register',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({name,email,password})});
-    const data=await res.json();
-    if(data.error){showError('registerError',data.error);return;}
-    localStorage.setItem('edun_token',data.token);
-    localStorage.setItem('edun_user',JSON.stringify(data.user));
-    currentUser=data.user;closeModal('register');showDashboard();
-  }catch(e){showError('registerError','Connection error!');}
-}
+ALWAYS:
+- Give memory tricks (mnemonics, acronyms, stories)
+- Highlight Bihar APO important points with ⭐
+- Keep answers clear and exam-focused
+- End with likely MCQ topics
 
-async function login(){
-  const email=document.getElementById('loginEmail').value.trim();
-  const password=document.getElementById('loginPassword').value;
-  if(!email||!password){showError('loginError','All fields required!');return;}
-  try{
-    const res=await fetch('/api/login',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({email,password})});
-    const data=await res.json();
-    if(data.error){showError('loginError',data.error);return;}
-    localStorage.setItem('edun_token',data.token);
-    localStorage.setItem('edun_user',JSON.stringify(data.user));
-    currentUser=data.user;closeModal('login');showDashboard();
-  }catch(e){showError('loginError','Connection error!');}
-}
+MODE INSTRUCTIONS:
+- quiz: Give 5 MCQs with answers
+- trick: Only memory tricks and mnemonics
+- exam: Most important exam points only
+- timeline: Chronological sequence with tricks
+- learn: Full explanation with tricks`;
 
-function logout(){
-  localStorage.removeItem('edun_token');localStorage.removeItem('edun_user');currentUser=null;
-  document.getElementById('dashboard').style.display='none';
-  document.getElementById('landingPage').style.display='block';
-  document.getElementById('navBtns').innerHTML='<button class="btn btn-outline" onclick="showModal(\'login\')">Login</button><button class="btn btn-primary" onclick="showModal(\'register\')">Get Started Free</button>';
-}
-
-function showDashboard(){
-  document.getElementById('landingPage').style.display='none';
-  document.getElementById('dashboard').style.display='block';
-  document.getElementById('navBtns').innerHTML=`<span style="font-size:13px;color:var(--text2)">Hi, ${currentUser.name.split(' ')[0]}!</span><button class="btn btn-outline" onclick="logout()">Logout</button>`;
-  document.getElementById('sidebarName').textContent=currentUser.name;
-  const planEl=document.getElementById('sidebarPlan');
-  planEl.textContent=currentUser.plan.toUpperCase();planEl.className=`plan-badge plan-${currentUser.plan}`;
-  document.getElementById('welcomeMsg').textContent=`Welcome back, ${currentUser.name.split(' ')[0]}! 👋`;
-  document.getElementById('settingsName').textContent=currentUser.name;
-  document.getElementById('settingsEmail').textContent=currentUser.email;
-  document.getElementById('settingsPlan').textContent=currentUser.plan.toUpperCase();
-  document.getElementById('settingsPlan').className=`plan-badge plan-${currentUser.plan}`;
-  buildExamGrid('dashExamsGrid',true);buildExamGrid('allExamsGrid',false);
-  buildExamGrid('practiceExamsGrid',false);buildExamGrid('revisionExamsGrid',false);
-}
-
-function buildExamGrid(containerId,limitFree){
-  const container=document.getElementById(containerId);container.innerHTML='';
-  Object.entries(EXAMS).forEach(([name,exam])=>{
-    const hasAccess=canAccess(exam.plan);
-    if(limitFree&&!hasAccess)return;
-    const card=document.createElement('div');card.className='exam-card';
-    card.style.opacity=hasAccess?'1':'0.6';
-    card.innerHTML=`<div class="exam-icon">${exam.icon}</div><div class="exam-name">${name}</div><div class="exam-desc">${exam.desc}</div><span class="exam-badge badge-${exam.plan}">${exam.plan.toUpperCase()}</span>${!hasAccess?'<div style="font-size:11px;color:#ef4444;margin-top:5px">🔒 Upgrade</div>':''}`;
-    card.onclick=()=>{if(!hasAccess){showSection('pricing');return;}openExam(name,exam);};
-    container.appendChild(card);
-  });
-}
-
-function canAccess(required){
-  const plans=['free','pro','elite'];
-  return plans.indexOf(currentUser?.plan||'free')>=plans.indexOf(required);
-}
-
-function openExam(name,exam){
-  currentExam=name;currentTopic=null;chatHistory=[];showSection('examview');
-  document.getElementById('examHeader').innerHTML=`<div class="exam-header-icon">${exam.icon}</div><div class="exam-header-info"><h2>${name}</h2><p>${exam.desc} • ${exam.topics.length} topics</p></div>`;
-  const topicsList=document.getElementById('topicsList');topicsList.innerHTML='';
-  exam.topics.forEach(topic=>{
-    const div=document.createElement('div');div.className='topic-item';
-    div.innerHTML=`<div class="topic-name">${topic}</div><div class="topic-sub">Click to study</div>`;
-    div.onclick=()=>{currentTopic=topic;document.querySelectorAll('.topic-item').forEach(t=>t.style.borderColor='var(--border)');div.style.borderColor='var(--primary)';askAI(`Give me a comprehensive ${currentMode} session on "${topic}" for ${currentExam} exam.`);};
-    topicsList.appendChild(div);
-  });
-  document.getElementById('chatMessages').innerHTML=`<div class="msg msg-ai">👋 Welcome to <strong>${name}</strong>! Select a topic or ask anything. 🎯</div>`;
+function setTopic(topic,btn){
+  currentTopic=topic;
+  document.querySelectorAll('.topic-btn').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  history=[];
+  addMessage('Topic: '+topic,'user');
+  askAI('Give comprehensive overview of '+topic+' for Bihar APO exam with memory tricks');
 }
 
 function setMode(mode,btn){
-  currentMode=mode;document.querySelectorAll('.mode-btn').forEach(b=>b.classList.remove('active'));btn.classList.add('active');
-  if(currentTopic)askAI(`${mode} session for "${currentTopic}" in ${currentExam}`);
+  currentMode=mode;
+  document.querySelectorAll('.mode-btn').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  const msgs={
+    quiz:'Quiz me with 5 MCQs on '+currentTopic,
+    trick:'Give all memory tricks for '+currentTopic,
+    exam:'Most important exam points for '+currentTopic+' Bihar APO',
+    timeline:'Complete timeline of '+currentTopic+' with memory tricks',
+    learn:'Explain '+currentTopic+' in detail with tricks'
+  };
+  if(msgs[mode]){addMessage(msgs[mode],'user');askAI(msgs[mode]);}
 }
 
-async function askAI(userMessage){
-  const token=localStorage.getItem('edun_token');
-  chatHistory.push({role:'user',content:userMessage});
-  addMessage(userMessage,'user');
-  const loadingDiv=document.createElement('div');loadingDiv.className='msg msg-ai';
-  loadingDiv.innerHTML='<div class="loading-dots"><div class="dot"></div><div class="dot"></div><div class="dot"></div></div>';
-  document.getElementById('chatMessages').appendChild(loadingDiv);scrollChat();
-  const systemPrompt=SYSTEM_PROMPTS[currentMode]+`\n\nExam: ${currentExam}\nTopic: ${currentTopic||'General'}`;
+function quickAsk(q){addMessage(q,'user');askAI(q);}
+
+async function askAI(question){
+  const loading=document.createElement('div');
+  loading.className='loading';
+  loading.textContent='⚔️ Consulting the scrolls...';
+  document.getElementById('chatArea').appendChild(loading);
+  scrollBottom();
+
+  history.push({role:'user',parts:[{text:question}]});
+
   try{
-    const res=await fetch('/api/ask',{method:'POST',headers:{'Content-Type':'application/json','Authorization':'Bearer '+token},body:JSON.stringify({messages:chatHistory,system:systemPrompt})});
-    const data=await res.json();loadingDiv.remove();
-    if(data.reply){chatHistory.push({role:'assistant',content:data.reply});addMessage(data.reply,'ai');}
-    else addMessage('Error. Please try again!','ai');
-  }catch(e){loadingDiv.remove();addMessage('Connection error!','ai');}
+    const res=await fetch('/ask',{
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({
+        system:SYSTEM+'\n\nCurrent topic: '+currentTopic+'\nMode: '+currentMode,
+        contents:history
+      })
+    });
+    const data=await res.json();
+    loading.remove();
+    if(data.candidates&&data.candidates[0]){
+      const reply=data.candidates[0].content.parts[0].text;
+      history.push({role:'model',parts:[{text:reply}]});
+      addMessage(reply,'ai');
+    }else{
+      addMessage('Error: '+JSON.stringify(data),'ai');
+    }
+  }catch(e){
+    loading.remove();
+    addMessage('Connection error: '+e.message,'ai');
+  }
 }
 
 function addMessage(text,sender){
-  const div=document.createElement('div');div.className=`msg msg-${sender==='user'?'user':'ai'}`;
-  if(sender==='ai'){div.innerHTML=text.replace(/\*\*(.*?)\*\*/g,'<strong>$1</strong>').replace(/💡(.*?)(?=\n|$)/g,'<div class="trick-box">💡$1</div>').replace(/\n/g,'<br>');}
-  else div.textContent=text;
-  document.getElementById('chatMessages').appendChild(div);scrollChat();
+  const div=document.createElement('div');
+  div.className='message '+(sender==='user'?'user-msg':'ai-msg');
+  if(sender==='ai'){
+    div.innerHTML=text
+      .replace(/\*\*(.*?)\*\*/g,'<strong>$1</strong>')
+      .replace(/💡(.*?)(?=\n|$)/g,'<div class="trick">💡$1</div>')
+      .replace(/⭐(.*?)(?=\n|$)/g,'<div class="trick">⭐$1</div>')
+      .replace(/\n/g,'<br>');
+  }else{
+    div.textContent=text;
+  }
+  document.getElementById('chatArea').appendChild(div);
+  scrollBottom();
 }
 
-function scrollChat(){const m=document.getElementById('chatMessages');m.scrollTop=m.scrollHeight;}
-
-function handleChatKey(e){if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();sendMessage();}}
-
+function handleKey(e){if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();sendMessage();}}
 function sendMessage(){
-  const inp=document.getElementById('chatInput');const t=inp.value.trim();if(!t)return;
-  askAI(t);inp.value='';
+  const input=document.getElementById('userInput');
+  const text=input.value.trim();
+  if(!text)return;
+  addMessage(text,'user');
+  askAI(text);
+  input.value='';
 }
-
-function showSection(name){
-  ['home','exams','examview','practice','revision','pricing','settings'].forEach(s=>{const el=document.getElementById(`section-${s}`);if(el)el.style.display='none';});
-  const target=document.getElementById(`section-${name}`);if(target)target.style.display='block';
+function scrollBottom(){
+  const c=document.getElementById('chatArea');
+  c.scrollTop=c.scrollHeight;
 }
-
-function handleUpgrade(plan){
-  if(!currentUser){showModal('register');return;}
-  selectedPlan=plan;
-  document.getElementById('paymentAmount').textContent=plan==='pro'?'₹99':'₹199';
-  document.getElementById('paymentSub').textContent=`Upgrading to ${plan.toUpperCase()}`;
-  showModal('payment');
-}
-
-async function confirmPayment(){
-  const txId=document.getElementById('transactionId').value.trim();
-  if(!txId){alert('Enter transaction ID!');return;}
-  const token=localStorage.getItem('edun_token');
-  try{
-    const res=await fetch('/api/upgrade',{method:'POST',headers:{'Content-Type':'application/json','Authorization':'Bearer '+token},body:JSON.stringify({plan:selectedPlan})});
-    const data=await res.json();
-    if(data.token){localStorage.setItem('edun_token',data.token);currentUser.plan=selectedPlan;localStorage.setItem('edun_user',JSON.stringify(currentUser));closeModal('payment');showDashboard();alert(`✅ Upgraded to ${selectedPlan.toUpperCase()}!`);}
-  }catch(e){alert('Error. Contact support!');}
-}
-
-function selectExamLanding(examName){
-  if(!currentUser){showModal('register');return;}
-  const exam=EXAMS[examName];
-  if(exam&&canAccess(exam.plan)){showDashboard();openExam(examName,exam);}
-  else{showDashboard();showSection('pricing');}
-}
-
-function showModal(type){document.getElementById(`${type}Modal`).classList.add('active');}
-function closeModal(type){document.getElementById(`${type}Modal`).classList.remove('active');}
-function switchModal(from,to){closeModal(from);showModal(to);}
-function showError(id,msg){const el=document.getElementById(id);el.textContent=msg;el.style.display='block';setTimeout(()=>el.style.display='none',3000);}
-
-window.onload=()=>{
-  const token=localStorage.getItem('edun_token');
-  const user=localStorage.getItem('edun_user');
-  if(token&&user){currentUser=JSON.parse(user);showDashboard();}
-};
 </script>
 </body>
 </html>
