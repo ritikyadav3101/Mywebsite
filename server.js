@@ -15,7 +15,7 @@ http.createServer((req, res) => {
   if (req.method === 'OPTIONS') { res.end(); return; }
 
   if (req.method === 'GET') {
-    const file = req.url === '/' ? '/history.html' : req.url;
+    const file = req.url === '/' ? '/index.html' : req.url;
     fs.readFile(path.join(__dirname, 'public', file), (err, data) => {
       if (err) { res.writeHead(404); res.end('Not found'); return; }
       res.writeHead(200, {'Content-Type': file.endsWith('.html') ? 'text/html' : 'text/plain'});
