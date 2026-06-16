@@ -1,48 +1,118 @@
 const fs = require('fs');
+const os = require('os');
 const http = require('http');
 const https = require('https');
 const path = require('path');
+const crypto = require('crypto');
 
-const KEY = (process.env.GROQ_KEY || '').trim();
-const PORT = process.env.PORT || 10000;
+const API_KEY = (process.env.GEMINI_KEY || '').replace(/[^\x20-\x7E]/g, '').trim();
+console.log('Key loaded:', API_KEY ? 'YES' : 'NO');
 
-console.log('Groq Key loaded:', KEY ? 'YES' : 'NO');
+const PORT = process.env.PORT || 3000;
 
-http.createServer((req, res) => {
+// Simple in-memory user store
+let users = {};
+let tokens = {};
+
+function generateToken() {
+  return crypto.randomBytes(32).toString('hex');
+}
+
+const server = http.createServer((req, res) => {
   res.setHeader('Access-Control-Allow-Origin', '*');
-  res.setHeader('Access-Control-Allow-Methods', 'POST,GET,OPTIONS');
-  res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
+  res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS, GET');
+  res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization');
+
   if (req.method === 'OPTIONS') { res.end(); return; }
 
+  // Serve static files
   if (req.method === 'GET') {
-    const file = req.url === '/' ? '/index.html' : req.url;
-    fs.readFile(path.join(__dirname, 'public', file), (err, data) => {
+    let file = req.url === '/' ? '/index.html' : req.url;
+    if (file.includes('?')) file = file.split('?')[0];
+    const filePath = path.join(__dirname, 'public', file);
+    fs.readFile(filePath, (err, data) => {
       if (err) { res.writeHead(404); res.end('Not found'); return; }
-      res.writeHead(200, {'Content-Type': file.endsWith('.html') ? 'text/html' : 'text/plain'});
+      const ext = path.extname(file);
+      const types = {'.html':'text/html','.css':'text/css','.js':'text/javascript','.svg':'image/svg+xml','.json':'application/json'};
+      res.writeHead(200, { 'Content-Type': types[ext] || 'text/plain' });
       res.end(data);
     });
     return;
   }
 
-  if (req.method === 'POST' && req.url === '/ask') {
-    let body = '';
-    req.on('data', d => body += d);
-    req.on('end', () => {
-      try {
-        const { contents, system } = JSON.parse(body);
-        
-        const messages = [];
-        if (system) messages.push({ role: 'system', content: system });
-        contents.forEach(c => {
-          messages.push({
-            role: c.role === 'model' ? 'assistant' : 'user',
-            content: c.parts[0].text
-          });
-        });
+  let body = '';
+  req.on('data', chunk => body += chunk);
+  req.on('end', () => {
+    try {
+      const data = JSON.parse(body || '{}');
+
+      // REGISTER
+      if (req.url === '/api/register') {
+        const { name, email, password } = data;
+        if (!name || !email || !password) {
+          res.writeHead(400); res.end(JSON.stringify({ error: 'All fields required' })); return;
+        }
+        if (users[email]) {
+          res.writeHead(400); res.end(JSON.stringify({ error: 'Email already exists' })); return;
+        }
+        const user = { name, email, password, plan: 'free' };
+        users[email] = user;
+        const token = generateToken();
+        tokens[token] = email;
+        res.writeHead(200, { 'Content-Type': 'application/json' });
+        res.end(JSON.stringify({ token, user: { name, email, plan: 'free' } }));
+        return;
+      }
+
+      // LOGIN
+      if (req.url === '/api/login') {
+        const { email, password } = data;
+        const user = users[email];
+        if (!user || user.password !== password) {
+          res.writeHead(401); res.end(JSON.stringify({ error: 'Invalid credentials' })); return;
+        }
+        const token = generateToken();
+        tokens[token] = email;
+        res.writeHead(200, { 'Content-Type': 'application/json' });
+        res.end(JSON.stringify({ token, user: { name: user.name, email, plan: user.plan } }));
+        return;
+      }
+
+      // UPGRADE
+      if (req.url === '/api/upgrade') {
+        const authHeader = req.headers['authorization'] || '';
+        const token = authHeader.replace('Bearer ', '').trim();
+        const email = tokens[token];
+        if (!email || !users[email]) {
+          res.writeHead(401); res.end(JSON.stringify({ error: 'Unauthorized' })); return;
+        }
+        users[email].plan = data.plan;
+        const newToken = generateToken();
+        tokens[newToken] = email;
+        res.writeHead(200, { 'Content-Type': 'application/json' });
+        res.end(JSON.stringify({ token: newToken, user: { name: users[email].name, email, plan: data.plan } }));
+        return;
+      }
+
+      // ASK AI
+      if (req.url === '/api/ask') {
+        const { messages, system } = data;
+        const authHeader = req.headers['authorization'] || '';
+        const token = authHeader.replace('Bearer ', '').trim();
+        const email = tokens[token];
+        if (!email) {
+          res.writeHead(401); res.end(JSON.stringify({ error: 'Unauthorized' })); return;
+        }
+
+        const groqMessages = [];
+        if (system) groqMessages.push({ role: 'system', content: system });
+        if (messages && messages.length > 0) {
+          messages.forEach(m => groqMessages.push({ role: m.role, content: m.content }));
+        }
 
         const payload = JSON.stringify({
           model: 'llama-3.1-8b-instant',
-          messages: messages,
+          messages: groqMessages,
           max_tokens: 1024
         });
 
@@ -52,25 +122,23 @@ http.createServer((req, res) => {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
-            'Authorization': `Bearer ${KEY}`,
+            'Authorization': 'Bearer ' + API_KEY,
             'Content-Length': Buffer.byteLength(payload)
           }
         };
 
         const apiReq = https.request(options, apiRes => {
-          let data = '';
-          apiRes.on('data', d => data += d);
+          let resData = '';
+          apiRes.on('data', chunk => resData += chunk);
           apiRes.on('end', () => {
             try {
-              const groqData = JSON.parse(data);
-              const text = groqData.choices[0].message.content;
-              res.writeHead(200, {'Content-Type': 'application/json'});
-              res.end(JSON.stringify({
-                candidates: [{ content: { parts: [{ text }], role: 'model' } }]
-              }));
+              const groqData = JSON.parse(resData);
+              const reply = groqData.choices[0].message.content;
+              res.writeHead(200, { 'Content-Type': 'application/json' });
+              res.end(JSON.stringify({ reply }));
             } catch(e) {
               res.writeHead(500);
-              res.end(JSON.stringify({ error: data }));
+              res.end(JSON.stringify({ error: 'AI error' }));
             }
           });
         });
@@ -79,13 +147,16 @@ http.createServer((req, res) => {
           res.writeHead(500);
           res.end(JSON.stringify({ error: e.message }));
         });
-
         apiReq.write(payload);
         apiReq.end();
-      } catch(e) {
-        res.writeHead(400);
-        res.end(JSON.stringify({ error: e.message }));
+        return;
       }
-    });
-  }
-}).listen(PORT, '0.0.0.0', () => console.log('Server running on port ' + PORT));
+
+      res.writeHead(404); res.end('Not found');
+    } catch(e) {
+      res.writeHead(400); res.end(JSON.stringify({ error: 'Bad request' }));
+    }
+  });
+});
+
+server.listen(PORT, '0.0.0.0', () => console.log('Server running on port ' + PORT));
